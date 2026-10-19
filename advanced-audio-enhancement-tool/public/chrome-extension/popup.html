@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volume Corrector Pro</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-brand">
+        <div class="logo">
+          <span class="logo-icon">🔊</span>
+          <div id="liveDot" class="live-dot hidden"></div>
+        </div>
+        <div>
+          <h1 class="title">Volume Corrector Pro</h1>
+          <p class="subtitle">Tab Audio Enhancement</p>
+        </div>
+      </div>
+      <button id="bypassBtn" class="btn-bypass hidden" title="Toggle bypass">🔀 Bypass</button>
+    </header>
+
+    <!-- Status Bar -->
+    <div id="statusBar" class="status-bar status-info">
+      Select a source and click Start
+    </div>
+
+    <!-- Anti-doubling notice -->
+    <div id="antiDoubleNote" class="anti-double hidden">
+      🛡️ Anti-doubling ON — original tab audio suppressed
+    </div>
+
+    <!-- Main Controls -->
+    <main class="main">
+      <!-- Capture Section -->
+      <section class="section" id="captureSection">
+        <div class="section-header">
+          <span>📡 Capture Source</span>
+        </div>
+        <div class="source-grid">
+          <button class="source-btn active" data-source="tab" id="srcTab">
+            <span class="source-icon">🌐</span>
+            <span class="source-label">Tab</span>
+          </button>
+          <button class="source-btn" data-source="window" id="srcWindow">
+            <span class="source-icon">🪟</span>
+            <span class="source-label">Window</span>
+          </button>
+        </div>
+
+        <div id="captureHint" class="capture-hint">
+          Captures audio from the current tab. Make sure the tab is playing audio.
+        </div>
+
+        <button id="startBtn" class="btn-start">
+          ▶️ Start Enhancement
+        </button>
+      </section>
+
+      <!-- Volume Section -->
+      <section class="section">
+        <div class="section-header">
+          <span>🔊 Master Volume</span>
+          <span id="volValue" class="value-display">100%</span>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" id="volumeSlider" min="0" max="500" value="100" step="5">
+        </div>
+        <div class="quick-vol">
+          <button class="chip" data-vol="50">50%</button>
+          <button class="chip active" data-vol="100">100%</button>
+          <button class="chip" data-vol="150">150%</button>
+          <button class="chip" data-vol="250">250%</button>
+          <button class="chip" data-vol="400">400%</button>
+        </div>
+      </section>
+
+      <!-- Enhancement Section -->
+      <section class="section">
+        <div class="section-header">
+          <span>✨ Enhancement</span>
+        </div>
+        <div class="control-row">
+          <label class="control-label">
+            <span>🔍 Clarity</span>
+            <span id="clarityVal" class="control-val">50</span>
+          </label>
+          <input type="range" id="claritySlider" min="0" max="100" value="50" class="mini-slider" data-color="#22c55e">
+        </div>
+        <div class="control-row">
+          <label class="control-label">
+            <span>🔇 Noise Gate</span>
+            <span id="noiseVal" class="control-val">20</span>
+          </label>
+          <input type="range" id="noiseSlider" min="0" max="100" value="20" class="mini-slider" data-color="#eab308">
+        </div>
+        <div class="control-row">
+          <label class="control-label">
+            <span>🎯 De-Esser</span>
+            <span id="deEsserVal" class="control-val">30</span>
+          </label>
+          <input type="range" id="deEsserSlider" min="0" max="100" value="30" class="mini-slider" data-color="#06b6d4">
+        </div>
+      </section>
+
+      <!-- EQ Section -->
+      <section class="section">
+        <div class="section-header">
+          <span>🎛️ EQ</span>
+          <div class="eq-btns">
+            <button class="chip" data-eq="flat">Flat</button>
+            <button class="chip" data-eq="vocal">Vocal</button>
+            <button class="chip" data-eq="bass">Bass</button>
+            <button class="chip" data-eq="bright">Bright</button>
+          </div>
+        </div>
+        <div class="eq-grid" id="eqGrid">
+          <!-- EQ faders injected by JS -->
+        </div>
+      </section>
+
+      <!-- Dynamics Section -->
+      <section class="section">
+        <div class="section-header">
+          <span>🗜️ Dynamics</span>
+        </div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" id="compToggle">
+            <span class="toggle-dot"></span> Compressor
+          </button>
+          <button class="toggle-btn active" id="limiterToggle">
+            <span class="toggle-dot"></span> Limiter
+          </button>
+        </div>
+        <div class="control-row">
+          <label class="control-label">
+            <span>Threshold</span>
+            <span id="threshVal" class="control-val">-24dB</span>
+          </label>
+          <input type="range" id="threshSlider" min="-60" max="0" value="-24" class="mini-slider" data-color="#f97316">
+        </div>
+        <div class="control-row">
+          <label class="control-label">
+            <span>Ratio</span>
+            <span id="ratioVal" class="control-val">4:1</span>
+          </label>
+          <input type="range" id="ratioSlider" min="1" max="20" value="4" step="0.5" class="mini-slider" data-color="#f97316">
+        </div>
+      </section>
+
+      <!-- Meters Section (visible when active) -->
+      <section class="section hidden" id="metersSection">
+        <div class="section-header">
+          <span>📊 Meters</span>
+        </div>
+        <div class="meters">
+          <div class="meter">
+            <span class="meter-label">Level</span>
+            <div class="meter-bar">
+              <div id="levelBar" class="meter-fill" style="width: 0%"></div>
+            </div>
+            <span id="levelPct" class="meter-val">0%</span>
+          </div>
+          <div class="meter">
+            <span class="meter-label">Comp GR</span>
+            <div class="meter-bar">
+              <div id="compBar" class="meter-fill meter-fill-orange" style="width: 0%"></div>
+            </div>
+            <span id="compVal" class="meter-val">—</span>
+          </div>
+          <div class="meter">
+            <span class="meter-label">Limit</span>
+            <div class="meter-bar">
+              <div id="limitBar" class="meter-fill meter-fill-red" style="width: 0%"></div>
+            </div>
+            <span id="limitVal" class="meter-val">clean</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Presets Section -->
+      <section class="section">
+        <div class="section-header">
+          <span>💾 Presets</span>
+        </div>
+        <div class="preset-grid" id="presetGrid">
+          <button class="preset-btn" data-preset="voice">🎙 Voice</button>
+          <button class="preset-btn" data-preset="youtube">📺 YouTube</button>
+          <button class="preset-btn" data-preset="music">🎵 Music</button>
+          <button class="preset-btn" data-preset="bass">🔊 Bass</button>
+          <button class="preset-btn" data-preset="fix">🔧 Fix</button>
+          <button class="preset-btn" data-preset="max">🚀 Max</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span>Volume Corrector Pro v2.0</span>
+      <span>Anti-doubling • Limiter • EQ • Clarity</span>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

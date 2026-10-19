@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Volume Corrector Pro",
+  "version": "2.0.0",
+  "description": "Boost, enhance, and fix audio from any browser tab — volume boost up to 500%, voice clarity, noise reduction, 5-band EQ",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Volume Corrector Pro"
+  },
+  "permissions": [
+    "tabCapture",
+    "activeTab",
+    "tabs",
+    "offscreen",
+    "storage"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
